@@ -12,7 +12,53 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var exports = module.exports = {};
+
+var defaultCorsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "access-control-allow-headers": "content-type, accept",
+  "access-control-max-age": 10 // Seconds.
+};
+
+var messages = {};
+
+var router = {
+  messages: {
+    GET: getMessages,
+    POST: postMessages
+  },
+  users: {
+    GET: getUsers
+  }
+  // rooms:
+};
+
+function getMessages(request, response){
+  console.log(request.method);
+  console.log("getMessages");
+  response.end("this is messages");
+};
+
+function postMessages(request, response){
+  console.log(request);
+  console.log(request.method);
+  console.log("postMessages");
+  response.end("ended post messages");
+};
+
+function getUsers(request, response){
+  console.log(request.method);
+  console.log("hello to users");
+  response.end("this is users")
+};
+
 var requestHandler = function(request, response) {
+  var url = request.url.split("/")[1];
+  // console.log(url);
+  // console.log(router[url]);
+  // console.log(request.method);
+  // console.log(router[url][request.method]);
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -52,7 +98,13 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end("Hello, World!");
+  if (request.method !== "OPTIONS") {
+    router[url][request.method](request, response);
+
+  } else {
+    response.end("HALLO, World!");
+
+  }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -64,10 +116,5 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
-};
 
+exports.requestHandler = requestHandler;
