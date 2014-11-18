@@ -1,5 +1,6 @@
 /* Import node's http module: */
 var http = require("http");
+// var fs = require("fs");
 var requestHandleFile = require("./request-handler.js");
 var handleRequest = requestHandleFile.requestHandler;
 
@@ -16,7 +17,11 @@ var port = 3000;
 // special address that always refers to localhost.
 var ip = "127.0.0.1";
 
-
+// make router here with the keys as the part after the slash, and the value referring to the module
+// then add logic to the creation of the server, only doing so when the part after the slash is present
+// var router = {
+//   messages: requestHandleFile
+// };
 
 // We use node's http module to create a server.
 //
@@ -24,9 +29,13 @@ var ip = "127.0.0.1";
 // incoming requests.
 //
 // After creating the server, we will tell it to listen on the given port and IP. */
+
+
+
 var server = http.createServer(handleRequest);
 console.log("Listening on http://" + ip + ":" + port);
 server.listen(port, ip);
+
 
 // To start this server, run:
 //

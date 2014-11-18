@@ -11,8 +11,12 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-
+var fs = require("fs");
 var exports = module.exports = {};
+
+var serverPath = __dirname.split("/");
+serverPath.pop();
+var clientPath = serverPath.join("/");
 
 var defaultCorsHeaders = {
   "access-control-allow-origin": "*",
@@ -72,6 +76,7 @@ function getUsers(request, response){
 var requestHandler = function(request, response) {
   var url = request.url.split("/")[1];
   // console.log(url);
+
   // console.log(router[url]);
   // console.log(request.method);
   // console.log(router[url][request.method]);
@@ -90,7 +95,6 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
-
   // The outgoing status.
   var statusCode = 200;
 
@@ -101,12 +105,13 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "application/JSON";
+
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
 
+  // response.write();
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -114,12 +119,29 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  if (request.method !== "OPTIONS") {
-    router[url][request.method](request, response);
 
-  } else {
-    response.end("HALLO, World!");
+  if(request.url === "/"){
+    headers['Content-Type'] = "text/html";
+    console.log("i got in 1!")
+    var html = fs.readFileSync(clientPath + "/client/index.html");
+    response.write(html);
+    response.end();
+  } else if (router[url]) {
+    if (request.method !== "OPTIONS") {
+      headers['Content-Type'] = "application/JSON";
+      router[url][request.method](request, response);
+    }
+    // console.log(request.method);
+    // console.log(url);
+      // console.log(router[url]);
+  } else if (request.url === "/?username=jon"){
 
+  }else{
+    headers['Content-Type'] = "text/html";
+    console.log("i got in 3!")
+    console.log(request.url)
+    var html = fs.readFileSync(clientPath + "/client" + request.url);
+    response.end(html);
   }
 };
 
