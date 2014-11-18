@@ -21,11 +21,14 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var storage = {};
+var currentId = 3;
 
-storage.results = [{"username":"doug","text":"i like hack reactor soooo much!","roomname":"lobby"},
-{"username":"jon","text":"i ate an orange","roomname":"house"},
-{"username":"charlie","text":"im awesome!!!","roomname":"hr floor 8"}];
+var storage = {
+};
+
+storage.results = [{"username":"doug","text":"i like hack reactor soooo much!","roomname":"lobby","objectId":"0"},
+{"username":"jon","text":"i ate an orange","roomname":"house","objectId":"1"},
+{"username":"charlie","text":"im awesome!!!","roomname":"hr floor 8","objectId":"2"}];
 
 var router = {
   messages: {
@@ -49,7 +52,10 @@ function getMessages(request, response){
 
 function postMessages(request, response){
   request.on('data', function(datum) {
-    storage.results.push(JSON.parse(datum));
+    var tempDatum = JSON.parse(datum);
+    tempDatum["objectId"] = currentId;
+    currentId++;
+    storage.results.push(tempDatum);
   })
   //console.log(request);
   // console.log(request.method);
