@@ -46,7 +46,7 @@ $(function() {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (data) {
-          console.log(this.data);
+          // console.log(this.data);
           console.log('chatterbox: Message sent');
           // Trigger a fetch to update the messages, pass true to animate
           app.fetch();
@@ -61,10 +61,13 @@ $(function() {
         url: app.server,
         type: 'GET',
         contentType: 'application/json',
-        // data: {},
+        // data: JSON.parse(data),
         success: function(data) {
+          data = JSON.parse(data);
+          console.log(data);
+          console.log(data.results);
           console.log('chatterbox: Messages fetched');
-          console.log(data)
+          // console.log(data)
           // Don't bother if we have nothing to work with
           if (!data.results || !data.results.length) { return; }
 

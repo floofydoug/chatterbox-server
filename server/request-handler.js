@@ -21,7 +21,11 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var messages = {};
+var storage = {};
+
+storage.results = [{"username":"doug","text":"i like hack reactor soooo much!","roomname":"lobby"},
+{"username":"jon","text":"i ate an orange","roomname":"house"},
+{"username":"charlie","text":"im awesome!!!","roomname":"hr floor 8"}];
 
 var router = {
   messages: {
@@ -35,21 +39,27 @@ var router = {
 };
 
 function getMessages(request, response){
-  console.log(request.method);
-  console.log("getMessages");
-  response.end("this is messages");
+  //response.write();
+  //console.log(response.write());
+  // response.write(messages);
+  //response[LOL] = storage;
+  response.end(JSON.stringify(storage));
+  console.log("hi");
 };
 
 function postMessages(request, response){
-  console.log(request);
-  console.log(request.method);
-  console.log("postMessages");
+  request.on('data', function(datum) {
+    storage.results.push(JSON.parse(datum));
+  })
+  //console.log(request);
+  // console.log(request.method);
+  // console.log("postMessages");
   response.end("ended post messages");
 };
 
 function getUsers(request, response){
-  console.log(request.method);
-  console.log("hello to users");
+  // console.log(request.method);
+  // console.log("hello to users");
   response.end("this is users")
 };
 
@@ -85,7 +95,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "text/plain";
+  headers['Content-Type'] = "application/JSON";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
